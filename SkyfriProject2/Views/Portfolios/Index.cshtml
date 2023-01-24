@@ -1,0 +1,67 @@
+﻿@model IEnumerable<SkyfriProject2.Models.Portfolio>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<select id="tenantSelect">
+    @foreach (var group in Model.GroupBy(x => x.TenantId))
+    {
+        var item = group.First();
+        <option value="@item.TenantId">
+            @Html.DisplayFor(modelItem => item.Tenant.TenantName)
+        </option>
+    }
+</select>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PortfolioName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tenant)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="portfolioRow" data-tenant-id="@item.TenantId">
+                <td>
+                    @Html.DisplayFor(modelItem => item.PortfolioName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tenant.TenantName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PortfolioId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.PortfolioId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PortfolioId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    document.getElementById("tenantSelect").addEventListener("change", function () {
+        var selectedTenantId = this.value;
+        var portfolioRows = document.getElementsByClassName("portfolioRow");
+        for (var i = 0; i < portfolioRows.length; i++) {
+            var row = portfolioRows[i];
+            if (row.getAttribute("data-tenant-id") == selectedTenantId) {
+                row.style.display = "table-row";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    });
+</script>
